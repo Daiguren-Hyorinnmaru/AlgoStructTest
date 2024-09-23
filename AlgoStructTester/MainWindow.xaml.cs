@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Tests;
 
 namespace AlgoStructTester
 {
@@ -20,9 +21,21 @@ namespace AlgoStructTester
     /// </summary>
     public partial class MainWindow : Window
     {
+        Tester tester;
         public MainWindow()
         {
+            tester = new Tester();
             InitializeComponent();
+        }
+
+        private void Run_Click(object sender, RoutedEventArgs e)
+        {
+            tester.Run();
+        }
+
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }

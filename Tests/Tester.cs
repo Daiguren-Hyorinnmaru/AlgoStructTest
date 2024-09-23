@@ -8,5 +8,13 @@ namespace Tests
 {
     public class Tester
     {
+        public Tester() 
+        { 
+        }
+
+        public void Run()
+        {
+
+        }
     }
 }

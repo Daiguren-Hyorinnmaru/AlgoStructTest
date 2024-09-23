@@ -7,6 +7,8 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid Background="Black">
-        
+        <Button x:Name="Run" Content="Run" HorizontalAlignment="Left" Margin="266,183,0,0" VerticalAlignment="Top" Click="Run_Click"/>
+        <Button x:Name="Close" Content="Close" HorizontalAlignment="Left" Margin="536,183,0,0" VerticalAlignment="Top" Click="Close_Click"/>
+
     </Grid>
 </Window>
