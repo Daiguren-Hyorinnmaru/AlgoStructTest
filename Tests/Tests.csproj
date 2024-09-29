@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Algorithms\SortingAlgorithms.cs" />
     <Compile Include="Factory\DataFactory.cs" />
     <Compile Include="RunTest.cs" />
     <Compile Include="Factory\CollectionFactory.cs" />
