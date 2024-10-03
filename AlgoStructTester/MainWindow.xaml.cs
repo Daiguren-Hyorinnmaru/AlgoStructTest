@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Tests;
 using Tests.Algorithms;
 using Tests.Factory;
@@ -41,7 +29,7 @@ namespace AlgoStructTester
                 Algorithms = new List<SortsAlgorithms> { SortsAlgorithms.QuickSort },
                 LengthStart = 1000,
                 LengthEnd = 10000,
-                Step = 1000
+                Step = 10
             };
             DataParams dataParams = new DataParams();
             tester.SortTestRun(sortParams, dataParams);

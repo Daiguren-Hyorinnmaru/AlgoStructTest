@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Collections.Concurrent;
 using Tests.Factory;
 using Tests.Params;
 using Tests.Result;
@@ -28,6 +25,13 @@ namespace Tests
         {
             _ = sortTestFactory.CreateSortingActionsAsync(sortParams, dataParams);
         }
+
+        public SortResult TakeResult()
+        {
+            if (concurrentQueue.TryDequeue(out var result)) return result;
+            return null;
+        }
+
         private void AddConcurrentQueue(SortResult sortResult) => concurrentQueue.Enqueue(sortResult);
     }
 }
