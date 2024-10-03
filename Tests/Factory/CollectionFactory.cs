@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Tests.Params;
 
 namespace Tests.Factory
 {
@@ -13,26 +11,44 @@ namespace Tests.Factory
         List
     }
 
-    public class CollectionFactory
+    internal class CollectionFactory
     {
-        DataFactory dataFactory;
+        private DataFactory dataFactory;
+
+        public readonly Dictionary<DataType, Func<CollectionType, int, dynamic>> functions;
 
         public CollectionFactory(DataFactory dataFactory)
         {
+            Dictionary<DataType, Func<CollectionType, int, dynamic>> InitializeFunctions()
+            {
+                return new Dictionary<DataType, Func<CollectionType, int, dynamic>>
+                {
+                    { DataType.String, (collectionType, length) =>
+                        GetCollection<string>(DataType.String, collectionType, length) },
+                    { DataType.Integer, (collectionType, length) =>
+                        GetCollection<int>(DataType.Integer, collectionType, length) },
+                    { DataType.Double, (collectionType, length) =>
+                        GetCollection<double>(DataType.Double, collectionType, length) }
+                };
+            }
+
             this.dataFactory = dataFactory;
+            functions = InitializeFunctions();
         }
 
-        public IList<T> GetListCollection<T>(DataType dataType, CollectionType collectionType, int length) where T : IComparable<T>
+        public void SetDataParams(DataParams dataParams) =>
+            dataFactory.DataParams = dataParams;
+
+        private IList<T> GetCollection<T>(DataType dataType, CollectionType collectionType, int length) where T : IComparable<T>
         {
             IList<T> CreateList(IEnumerable<T> items) => new List<T>(items);
-
             IList<T> CreateArray(IEnumerable<T> items) => items.ToArray();
 
             switch (collectionType)
             {
-                case (CollectionType.Array):
+                case CollectionType.Array:
                     return CreateArray(GenerateValues<T>(dataType, length));
-                case (CollectionType.List):
+                case CollectionType.List:
                     return CreateList(GenerateValues<T>(dataType, length));
             }
             return null;

@@ -13,6 +13,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Tests;
+using Tests.Algorithms;
+using Tests.Factory;
+using Tests.Params;
 
 namespace AlgoStructTester
 {
@@ -21,16 +24,27 @@ namespace AlgoStructTester
     /// </summary>
     public partial class MainWindow : Window
     {
-        Tester tester;
+        SortTester tester;
         public MainWindow()
         {
-            tester = new Tester();
+            tester = new SortTester();
             InitializeComponent();
+
         }
 
         private void Run_Click(object sender, RoutedEventArgs e)
         {
-            tester.Run();
+            SortParams sortParams = new SortParams
+            {
+                Collections = new List<CollectionType> { CollectionType.List/*, CollectionType.Array*/ },
+                DataTypes = new List<DataType> { DataType.String },
+                Algorithms = new List<SortsAlgorithms> { SortsAlgorithms.QuickSort },
+                LengthStart = 1000,
+                LengthEnd = 10000,
+                Step = 1000
+            };
+            DataParams dataParams = new DataParams();
+            tester.SortTestRun(sortParams, dataParams);
         }
 
         private void Close_Click(object sender, RoutedEventArgs e)

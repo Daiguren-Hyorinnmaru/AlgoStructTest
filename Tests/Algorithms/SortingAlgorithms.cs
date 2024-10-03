@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Tests.Algorithms
 {
-    enum SortsAlgorithms
+    public enum SortsAlgorithms
     {
         QuickSort,
         MergeSort
@@ -14,7 +11,18 @@ namespace Tests.Algorithms
 
     internal class SortingAlgorithms
     {
-        public static void QuickSort<T>(IList<T> collection) where T : IComparable<T>
+        public static Action GetActionAlgorithm<T>(SortsAlgorithms sortingAlgorithms, IList<T> list) where T : IComparable<T>
+        {
+            Dictionary<SortsAlgorithms, Action> sortingActions = new Dictionary<SortsAlgorithms, Action>
+            {
+                { SortsAlgorithms.MergeSort, () => MergeSort(list) },
+                { SortsAlgorithms.QuickSort, () => QuickSort(list) }
+            };
+
+            return sortingActions.TryGetValue(sortingAlgorithms, out var action) ? action : null;
+        }
+
+        private static void QuickSort<T>(IList<T> collection) where T : IComparable<T>
         {
             void QuickSortInner(IList<T> coll, int left, int right)
             {
@@ -53,7 +61,7 @@ namespace Tests.Algorithms
             QuickSortInner(collection, 0, collection.Count - 1);
         }
 
-        public static void MergeSort<T>(IList<T> collection) where T : IComparable<T>
+        private static void MergeSort<T>(IList<T> collection) where T : IComparable<T>
         {
             void MergeSortInner(IList<T> coll, int left, int right)
             {
