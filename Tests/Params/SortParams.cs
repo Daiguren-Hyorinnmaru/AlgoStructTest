@@ -12,5 +12,15 @@ namespace Tests.Params
         public int LengthStart { get; set; }
         public int LengthEnd { get; set; }
         public int Step { get; set; }
+
+        public SortParams()
+        {
+            Collections = new List<CollectionType>();
+            DataTypes = new List<DataType>();
+            Algorithms = new List<SortsAlgorithms>();
+            LengthStart = 10;
+            LengthEnd = 1000;
+            Step = 10;
+        }
     }
 }

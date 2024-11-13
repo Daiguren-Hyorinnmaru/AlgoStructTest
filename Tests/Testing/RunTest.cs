@@ -32,6 +32,7 @@ namespace Tests.Testing
 
             // Start processing the queue asynchronously
             _ = Task.Run(() => ProcessActionQueueAsync(_cancellationToken));
+            _ = StartPeriodicMemoryCleanupAsync();
         }
 
         // Asynchronous method to process actions from the queue
@@ -68,6 +69,21 @@ namespace Tests.Testing
             foreach (var item in actionTuple)
             {
                 _actionQueue.Enqueue(item);
+            }
+        }
+
+        public static async Task StartPeriodicMemoryCleanupAsync()
+        {
+            while (true)
+            {
+                await Task.Run(() =>
+                {
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    GC.Collect();
+                });
+
+                await Task.Delay(TimeSpan.FromSeconds(30));
             }
         }
     }

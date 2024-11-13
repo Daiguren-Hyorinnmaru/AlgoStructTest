@@ -21,9 +21,9 @@ namespace Tests
             runTest.OnResultAdded += AddConcurrentQueue;
         }
 
-        public void SortTestRun(SortParams sortParams, DataParams dataParams)
+        public async void SortTestRun(SortParams sortParams, DataParams dataParams)
         {
-            _ = sortTestFactory.CreateSortingActionsAsync(sortParams, dataParams);
+            await sortTestFactory.CreateSortingActionsAsync(sortParams, dataParams);
         }
 
         public SortResult TakeResult()

@@ -4,6 +4,11 @@
              xmlns:local="clr-namespace:AlgoStructTester"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Style\DarkTheme.xaml"/>
+                <ResourceDictionary Source="Style\TabControlResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
