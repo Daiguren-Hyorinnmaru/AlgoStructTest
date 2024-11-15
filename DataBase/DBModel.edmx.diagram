@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="a8af9c99407e4a6c9754da6b5f6a5fa1" Name="Diagram1">
+        <EntityTypeShape EntityType="TestingSystemModel.CollectionType" Width="1.5" PointX="0.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="TestingSystemModel.CPU_Config" Width="1.5" PointX="0.75" PointY="10.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="TestingSystemModel.DataType" Width="1.5" PointX="0.75" PointY="4.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="TestingSystemModel.PC_Config" Width="1.5" PointX="3" PointY="11.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="TestingSystemModel.RAM_Config" Width="1.5" PointX="0.75" PointY="13.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="TestingSystemModel.RAM_Modules" Width="1.5" PointX="0.75" PointY="16" IsExpanded="true" />
+        <EntityTypeShape EntityType="TestingSystemModel.RAM_Modules_Config" Width="1.5" PointX="3" PointY="15" IsExpanded="true" />
+        <EntityTypeShape EntityType="TestingSystemModel.Sort_Config" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="TestingSystemModel.SortResult" Width="1.5" PointX="5.25" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="TestingSystemModel.SortsAlgorithm" Width="1.5" PointX="0.75" PointY="6.875" IsExpanded="true" />
+        <AssociationConnector Association="TestingSystemModel.FK_Sort_Config_CollectionType" ManuallyRouted="false" />
+        <AssociationConnector Association="TestingSystemModel.FK_PC_Config_CPU_Config" ManuallyRouted="false" />
+        <AssociationConnector Association="TestingSystemModel.FK_Sort_Config_DataType" ManuallyRouted="false" />
+        <AssociationConnector Association="TestingSystemModel.FK_PC_Config_RAM_Config" ManuallyRouted="false" />
+        <AssociationConnector Association="TestingSystemModel.FK_SortResult_PC_Config" ManuallyRouted="false" />
+        <AssociationConnector Association="TestingSystemModel.FK_RAM_Modules_Config_RAM_Config" ManuallyRouted="false" />
+        <AssociationConnector Association="TestingSystemModel.FK_RAM_Modules_Config_RAM_Modules" ManuallyRouted="false" />
+        <AssociationConnector Association="TestingSystemModel.FK_Sort_Config_SortsAlgorithms" ManuallyRouted="false" />
+        <AssociationConnector Association="TestingSystemModel.FK_SortResult_Sort_Config" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

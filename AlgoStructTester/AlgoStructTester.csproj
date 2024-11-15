@@ -113,6 +113,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DataBase\DataBase.csproj">
+      <Project>{a6542e1d-fb53-4dd1-a2b3-f14cb8b5aebf}</Project>
+      <Name>DataBase</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Tests\Tests.csproj">
       <Project>{a34c41e1-5d67-4cd4-b467-62041c649ccc}</Project>
       <Name>Tests</Name>

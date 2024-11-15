@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerMVC", "ServerMVC\ServerMVC.csproj", "{DE78807E-1BC3-4554-B8E4-BC08D4DFDA34}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerMVC", "ServerMVC\ServerMVC.csproj", "{DE78807E-1BC3-4554-B8E4-BC08D4DFDA34}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlgoStructTester", "AlgoStructTester\AlgoStructTester.csproj", "{A2D2F13F-44E7-415D-8C4E-66A1ECA278DD}"
 EndProject

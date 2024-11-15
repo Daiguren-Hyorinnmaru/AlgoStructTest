@@ -1,4 +1,5 @@
 ﻿using AlgoStructTester.Tab;
+using DataBase;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -16,6 +17,7 @@ namespace AlgoStructTester
     /// </summary>
     public partial class MainWindow : Window
     {
+        TestingSystemEntities appDbContext;
         SortTester tester;
         PCConfig _PCConfig;
         DynamicTabItem dynamicTabItem;
@@ -24,6 +26,9 @@ namespace AlgoStructTester
         public MainWindow()
         {
             InitializeComponent();
+
+            appDbContext = new TestingSystemEntities();
+
             _PCConfig = new PCConfig();
             sortsControl = new SortsControl(MainTabControl);
         }

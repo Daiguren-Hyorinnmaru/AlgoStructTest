@@ -1,0 +1,625 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="TestingSystemModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="CollectionType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="CollectionName" Type="text" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CPU_Config">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Name" Type="text" Nullable="false" />
+          <Property Name="NumberOfCores" Type="int" Nullable="false" />
+          <Property Name="ThreadCount" Type="int" Nullable="false" />
+          <Property Name="MaxClockSpeed" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="DataType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="TypeName" Type="text" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PC_Config">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="RAM_ID" Type="int" Nullable="false" />
+          <Property Name="CPU_ID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="RAM_Config">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="TotalVisibleMemorySize" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="RAM_Modules">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Capacity" Type="int" Nullable="false" />
+          <Property Name="ConfiguredClockSpeed" Type="int" Nullable="false" />
+          <Property Name="Speed" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="RAM_Modules_Config">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="ID_Modules" Type="int" Nullable="false" />
+          <Property Name="ID_Config" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Sort_Config">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="ID_CollectionType" Type="int" Nullable="false" />
+          <Property Name="ID_DataType" Type="int" Nullable="false" />
+          <Property Name="ID_SortsAlgorithms" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SortResult">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="ID_Sort_Config" Type="int" Nullable="false" />
+          <Property Name="ID_PC_Config" Type="int" Nullable="false" />
+          <Property Name="Time" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SortsAlgorithms">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="AlgorithmName" Type="text" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_PC_Config_CPU_Config">
+          <End Role="CPU_Config" Type="Self.CPU_Config" Multiplicity="1" />
+          <End Role="PC_Config" Type="Self.PC_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CPU_Config">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="PC_Config">
+              <PropertyRef Name="CPU_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PC_Config_RAM_Config">
+          <End Role="RAM_Config" Type="Self.RAM_Config" Multiplicity="1" />
+          <End Role="PC_Config" Type="Self.PC_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RAM_Config">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="PC_Config">
+              <PropertyRef Name="RAM_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RAM_Modules_Config_RAM_Config">
+          <End Role="RAM_Config" Type="Self.RAM_Config" Multiplicity="1" />
+          <End Role="RAM_Modules_Config" Type="Self.RAM_Modules_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RAM_Config">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="RAM_Modules_Config">
+              <PropertyRef Name="ID_Config" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RAM_Modules_Config_RAM_Modules">
+          <End Role="RAM_Modules" Type="Self.RAM_Modules" Multiplicity="1" />
+          <End Role="RAM_Modules_Config" Type="Self.RAM_Modules_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RAM_Modules">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="RAM_Modules_Config">
+              <PropertyRef Name="ID_Modules" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Sort_Config_CollectionType">
+          <End Role="CollectionType" Type="Self.CollectionType" Multiplicity="1" />
+          <End Role="Sort_Config" Type="Self.Sort_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CollectionType">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Sort_Config">
+              <PropertyRef Name="ID_CollectionType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Sort_Config_DataType">
+          <End Role="DataType" Type="Self.DataType" Multiplicity="1" />
+          <End Role="Sort_Config" Type="Self.Sort_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataType">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Sort_Config">
+              <PropertyRef Name="ID_DataType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Sort_Config_SortsAlgorithms">
+          <End Role="SortsAlgorithms" Type="Self.SortsAlgorithms" Multiplicity="1" />
+          <End Role="Sort_Config" Type="Self.Sort_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SortsAlgorithms">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Sort_Config">
+              <PropertyRef Name="ID_SortsAlgorithms" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SortResult_PC_Config">
+          <End Role="PC_Config" Type="Self.PC_Config" Multiplicity="1" />
+          <End Role="SortResult" Type="Self.SortResult" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PC_Config">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SortResult">
+              <PropertyRef Name="ID_PC_Config" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SortResult_Sort_Config">
+          <End Role="Sort_Config" Type="Self.Sort_Config" Multiplicity="1" />
+          <End Role="SortResult" Type="Self.SortResult" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sort_Config">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SortResult">
+              <PropertyRef Name="ID_Sort_Config" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="TestingSystemModelStoreContainer">
+          <EntitySet Name="CollectionType" EntityType="Self.CollectionType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CPU_Config" EntityType="Self.CPU_Config" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DataType" EntityType="Self.DataType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PC_Config" EntityType="Self.PC_Config" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RAM_Config" EntityType="Self.RAM_Config" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RAM_Modules" EntityType="Self.RAM_Modules" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RAM_Modules_Config" EntityType="Self.RAM_Modules_Config" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Sort_Config" EntityType="Self.Sort_Config" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SortResult" EntityType="Self.SortResult" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SortsAlgorithms" EntityType="Self.SortsAlgorithms" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_PC_Config_CPU_Config" Association="Self.FK_PC_Config_CPU_Config">
+            <End Role="CPU_Config" EntitySet="CPU_Config" />
+            <End Role="PC_Config" EntitySet="PC_Config" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PC_Config_RAM_Config" Association="Self.FK_PC_Config_RAM_Config">
+            <End Role="RAM_Config" EntitySet="RAM_Config" />
+            <End Role="PC_Config" EntitySet="PC_Config" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RAM_Modules_Config_RAM_Config" Association="Self.FK_RAM_Modules_Config_RAM_Config">
+            <End Role="RAM_Config" EntitySet="RAM_Config" />
+            <End Role="RAM_Modules_Config" EntitySet="RAM_Modules_Config" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RAM_Modules_Config_RAM_Modules" Association="Self.FK_RAM_Modules_Config_RAM_Modules">
+            <End Role="RAM_Modules" EntitySet="RAM_Modules" />
+            <End Role="RAM_Modules_Config" EntitySet="RAM_Modules_Config" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Sort_Config_CollectionType" Association="Self.FK_Sort_Config_CollectionType">
+            <End Role="CollectionType" EntitySet="CollectionType" />
+            <End Role="Sort_Config" EntitySet="Sort_Config" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Sort_Config_DataType" Association="Self.FK_Sort_Config_DataType">
+            <End Role="DataType" EntitySet="DataType" />
+            <End Role="Sort_Config" EntitySet="Sort_Config" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Sort_Config_SortsAlgorithms" Association="Self.FK_Sort_Config_SortsAlgorithms">
+            <End Role="SortsAlgorithms" EntitySet="SortsAlgorithms" />
+            <End Role="Sort_Config" EntitySet="Sort_Config" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SortResult_PC_Config" Association="Self.FK_SortResult_PC_Config">
+            <End Role="PC_Config" EntitySet="PC_Config" />
+            <End Role="SortResult" EntitySet="SortResult" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SortResult_Sort_Config" Association="Self.FK_SortResult_Sort_Config">
+            <End Role="Sort_Config" EntitySet="Sort_Config" />
+            <End Role="SortResult" EntitySet="SortResult" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="TestingSystemModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="CollectionType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="CollectionName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Sort_Config" Relationship="Self.FK_Sort_Config_CollectionType" FromRole="CollectionType" ToRole="Sort_Config" />
+        </EntityType>
+        <EntityType Name="CPU_Config">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="NumberOfCores" Type="Int32" Nullable="false" />
+          <Property Name="ThreadCount" Type="Int32" Nullable="false" />
+          <Property Name="MaxClockSpeed" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="PC_Config" Relationship="Self.FK_PC_Config_CPU_Config" FromRole="CPU_Config" ToRole="PC_Config" />
+        </EntityType>
+        <EntityType Name="DataType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="TypeName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Sort_Config" Relationship="Self.FK_Sort_Config_DataType" FromRole="DataType" ToRole="Sort_Config" />
+        </EntityType>
+        <EntityType Name="PC_Config">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="RAM_ID" Type="Int32" Nullable="false" />
+          <Property Name="CPU_ID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="CPU_Config" Relationship="Self.FK_PC_Config_CPU_Config" FromRole="PC_Config" ToRole="CPU_Config" />
+          <NavigationProperty Name="RAM_Config" Relationship="Self.FK_PC_Config_RAM_Config" FromRole="PC_Config" ToRole="RAM_Config" />
+          <NavigationProperty Name="SortResults" Relationship="Self.FK_SortResult_PC_Config" FromRole="PC_Config" ToRole="SortResult" />
+        </EntityType>
+        <EntityType Name="RAM_Config">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="TotalVisibleMemorySize" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="PC_Config" Relationship="Self.FK_PC_Config_RAM_Config" FromRole="RAM_Config" ToRole="PC_Config" />
+          <NavigationProperty Name="RAM_Modules_Config" Relationship="Self.FK_RAM_Modules_Config_RAM_Config" FromRole="RAM_Config" ToRole="RAM_Modules_Config" />
+        </EntityType>
+        <EntityType Name="RAM_Modules">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Capacity" Type="Int32" Nullable="false" />
+          <Property Name="ConfiguredClockSpeed" Type="Int32" Nullable="false" />
+          <Property Name="Speed" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="RAM_Modules_Config" Relationship="Self.FK_RAM_Modules_Config_RAM_Modules" FromRole="RAM_Modules" ToRole="RAM_Modules_Config" />
+        </EntityType>
+        <EntityType Name="RAM_Modules_Config">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="ID_Modules" Type="Int32" Nullable="false" />
+          <Property Name="ID_Config" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="RAM_Config" Relationship="Self.FK_RAM_Modules_Config_RAM_Config" FromRole="RAM_Modules_Config" ToRole="RAM_Config" />
+          <NavigationProperty Name="RAM_Modules" Relationship="Self.FK_RAM_Modules_Config_RAM_Modules" FromRole="RAM_Modules_Config" ToRole="RAM_Modules" />
+        </EntityType>
+        <EntityType Name="Sort_Config">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="ID_CollectionType" Type="Int32" Nullable="false" />
+          <Property Name="ID_DataType" Type="Int32" Nullable="false" />
+          <Property Name="ID_SortsAlgorithms" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="CollectionType" Relationship="Self.FK_Sort_Config_CollectionType" FromRole="Sort_Config" ToRole="CollectionType" />
+          <NavigationProperty Name="DataType" Relationship="Self.FK_Sort_Config_DataType" FromRole="Sort_Config" ToRole="DataType" />
+          <NavigationProperty Name="SortsAlgorithm" Relationship="Self.FK_Sort_Config_SortsAlgorithms" FromRole="Sort_Config" ToRole="SortsAlgorithms" />
+          <NavigationProperty Name="SortResults" Relationship="Self.FK_SortResult_Sort_Config" FromRole="Sort_Config" ToRole="SortResult" />
+        </EntityType>
+        <EntityType Name="SortResult">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="ID_Sort_Config" Type="Int32" Nullable="false" />
+          <Property Name="ID_PC_Config" Type="Int32" Nullable="false" />
+          <Property Name="Time" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="PC_Config" Relationship="Self.FK_SortResult_PC_Config" FromRole="SortResult" ToRole="PC_Config" />
+          <NavigationProperty Name="Sort_Config" Relationship="Self.FK_SortResult_Sort_Config" FromRole="SortResult" ToRole="Sort_Config" />
+        </EntityType>
+        <EntityType Name="SortsAlgorithm">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="AlgorithmName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Sort_Config" Relationship="Self.FK_Sort_Config_SortsAlgorithms" FromRole="SortsAlgorithms" ToRole="Sort_Config" />
+        </EntityType>
+        <Association Name="FK_Sort_Config_CollectionType">
+          <End Role="CollectionType" Type="Self.CollectionType" Multiplicity="1" />
+          <End Role="Sort_Config" Type="Self.Sort_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CollectionType">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Sort_Config">
+              <PropertyRef Name="ID_CollectionType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PC_Config_CPU_Config">
+          <End Role="CPU_Config" Type="Self.CPU_Config" Multiplicity="1" />
+          <End Role="PC_Config" Type="Self.PC_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CPU_Config">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="PC_Config">
+              <PropertyRef Name="CPU_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Sort_Config_DataType">
+          <End Role="DataType" Type="Self.DataType" Multiplicity="1" />
+          <End Role="Sort_Config" Type="Self.Sort_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataType">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Sort_Config">
+              <PropertyRef Name="ID_DataType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PC_Config_RAM_Config">
+          <End Role="RAM_Config" Type="Self.RAM_Config" Multiplicity="1" />
+          <End Role="PC_Config" Type="Self.PC_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RAM_Config">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="PC_Config">
+              <PropertyRef Name="RAM_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SortResult_PC_Config">
+          <End Role="PC_Config" Type="Self.PC_Config" Multiplicity="1" />
+          <End Role="SortResult" Type="Self.SortResult" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PC_Config">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SortResult">
+              <PropertyRef Name="ID_PC_Config" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RAM_Modules_Config_RAM_Config">
+          <End Role="RAM_Config" Type="Self.RAM_Config" Multiplicity="1" />
+          <End Role="RAM_Modules_Config" Type="Self.RAM_Modules_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RAM_Config">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="RAM_Modules_Config">
+              <PropertyRef Name="ID_Config" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RAM_Modules_Config_RAM_Modules">
+          <End Role="RAM_Modules" Type="Self.RAM_Modules" Multiplicity="1" />
+          <End Role="RAM_Modules_Config" Type="Self.RAM_Modules_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RAM_Modules">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="RAM_Modules_Config">
+              <PropertyRef Name="ID_Modules" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Sort_Config_SortsAlgorithms">
+          <End Role="SortsAlgorithms" Type="Self.SortsAlgorithm" Multiplicity="1" />
+          <End Role="Sort_Config" Type="Self.Sort_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SortsAlgorithms">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Sort_Config">
+              <PropertyRef Name="ID_SortsAlgorithms" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SortResult_Sort_Config">
+          <End Role="Sort_Config" Type="Self.Sort_Config" Multiplicity="1" />
+          <End Role="SortResult" Type="Self.SortResult" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sort_Config">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SortResult">
+              <PropertyRef Name="ID_Sort_Config" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="TestingSystemEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="CollectionTypes" EntityType="Self.CollectionType" />
+          <EntitySet Name="CPU_Config" EntityType="Self.CPU_Config" />
+          <EntitySet Name="DataTypes" EntityType="Self.DataType" />
+          <EntitySet Name="PC_Config" EntityType="Self.PC_Config" />
+          <EntitySet Name="RAM_Config" EntityType="Self.RAM_Config" />
+          <EntitySet Name="RAM_Modules" EntityType="Self.RAM_Modules" />
+          <EntitySet Name="RAM_Modules_Config" EntityType="Self.RAM_Modules_Config" />
+          <EntitySet Name="Sort_Config" EntityType="Self.Sort_Config" />
+          <EntitySet Name="SortResults" EntityType="Self.SortResult" />
+          <EntitySet Name="SortsAlgorithms" EntityType="Self.SortsAlgorithm" />
+          <AssociationSet Name="FK_Sort_Config_CollectionType" Association="Self.FK_Sort_Config_CollectionType">
+            <End Role="CollectionType" EntitySet="CollectionTypes" />
+            <End Role="Sort_Config" EntitySet="Sort_Config" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PC_Config_CPU_Config" Association="Self.FK_PC_Config_CPU_Config">
+            <End Role="CPU_Config" EntitySet="CPU_Config" />
+            <End Role="PC_Config" EntitySet="PC_Config" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Sort_Config_DataType" Association="Self.FK_Sort_Config_DataType">
+            <End Role="DataType" EntitySet="DataTypes" />
+            <End Role="Sort_Config" EntitySet="Sort_Config" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PC_Config_RAM_Config" Association="Self.FK_PC_Config_RAM_Config">
+            <End Role="RAM_Config" EntitySet="RAM_Config" />
+            <End Role="PC_Config" EntitySet="PC_Config" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SortResult_PC_Config" Association="Self.FK_SortResult_PC_Config">
+            <End Role="PC_Config" EntitySet="PC_Config" />
+            <End Role="SortResult" EntitySet="SortResults" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RAM_Modules_Config_RAM_Config" Association="Self.FK_RAM_Modules_Config_RAM_Config">
+            <End Role="RAM_Config" EntitySet="RAM_Config" />
+            <End Role="RAM_Modules_Config" EntitySet="RAM_Modules_Config" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RAM_Modules_Config_RAM_Modules" Association="Self.FK_RAM_Modules_Config_RAM_Modules">
+            <End Role="RAM_Modules" EntitySet="RAM_Modules" />
+            <End Role="RAM_Modules_Config" EntitySet="RAM_Modules_Config" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Sort_Config_SortsAlgorithms" Association="Self.FK_Sort_Config_SortsAlgorithms">
+            <End Role="SortsAlgorithms" EntitySet="SortsAlgorithms" />
+            <End Role="Sort_Config" EntitySet="Sort_Config" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SortResult_Sort_Config" Association="Self.FK_SortResult_Sort_Config">
+            <End Role="Sort_Config" EntitySet="Sort_Config" />
+            <End Role="SortResult" EntitySet="SortResults" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="TestingSystemModelStoreContainer" CdmEntityContainer="TestingSystemEntities">
+          <EntitySetMapping Name="CollectionTypes">
+            <EntityTypeMapping TypeName="TestingSystemModel.CollectionType">
+              <MappingFragment StoreEntitySet="CollectionType">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="CollectionName" ColumnName="CollectionName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CPU_Config">
+            <EntityTypeMapping TypeName="TestingSystemModel.CPU_Config">
+              <MappingFragment StoreEntitySet="CPU_Config">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="NumberOfCores" ColumnName="NumberOfCores" />
+                <ScalarProperty Name="ThreadCount" ColumnName="ThreadCount" />
+                <ScalarProperty Name="MaxClockSpeed" ColumnName="MaxClockSpeed" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DataTypes">
+            <EntityTypeMapping TypeName="TestingSystemModel.DataType">
+              <MappingFragment StoreEntitySet="DataType">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="TypeName" ColumnName="TypeName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PC_Config">
+            <EntityTypeMapping TypeName="TestingSystemModel.PC_Config">
+              <MappingFragment StoreEntitySet="PC_Config">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="RAM_ID" ColumnName="RAM_ID" />
+                <ScalarProperty Name="CPU_ID" ColumnName="CPU_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RAM_Config">
+            <EntityTypeMapping TypeName="TestingSystemModel.RAM_Config">
+              <MappingFragment StoreEntitySet="RAM_Config">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="TotalVisibleMemorySize" ColumnName="TotalVisibleMemorySize" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RAM_Modules">
+            <EntityTypeMapping TypeName="TestingSystemModel.RAM_Modules">
+              <MappingFragment StoreEntitySet="RAM_Modules">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Capacity" ColumnName="Capacity" />
+                <ScalarProperty Name="ConfiguredClockSpeed" ColumnName="ConfiguredClockSpeed" />
+                <ScalarProperty Name="Speed" ColumnName="Speed" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RAM_Modules_Config">
+            <EntityTypeMapping TypeName="TestingSystemModel.RAM_Modules_Config">
+              <MappingFragment StoreEntitySet="RAM_Modules_Config">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ID_Modules" ColumnName="ID_Modules" />
+                <ScalarProperty Name="ID_Config" ColumnName="ID_Config" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Sort_Config">
+            <EntityTypeMapping TypeName="TestingSystemModel.Sort_Config">
+              <MappingFragment StoreEntitySet="Sort_Config">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ID_CollectionType" ColumnName="ID_CollectionType" />
+                <ScalarProperty Name="ID_DataType" ColumnName="ID_DataType" />
+                <ScalarProperty Name="ID_SortsAlgorithms" ColumnName="ID_SortsAlgorithms" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SortResults">
+            <EntityTypeMapping TypeName="TestingSystemModel.SortResult">
+              <MappingFragment StoreEntitySet="SortResult">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ID_Sort_Config" ColumnName="ID_Sort_Config" />
+                <ScalarProperty Name="ID_PC_Config" ColumnName="ID_PC_Config" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SortsAlgorithms">
+            <EntityTypeMapping TypeName="TestingSystemModel.SortsAlgorithm">
+              <MappingFragment StoreEntitySet="SortsAlgorithms">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="AlgorithmName" ColumnName="AlgorithmName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
