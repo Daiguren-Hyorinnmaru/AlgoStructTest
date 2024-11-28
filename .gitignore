@@ -362,3 +362,6 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /DataBase/Connection.config
+/AlgoStructTester/Connection.config
+/DataBase/ConnestionString.cs
+/ServerAPI/TestingSystem.db
