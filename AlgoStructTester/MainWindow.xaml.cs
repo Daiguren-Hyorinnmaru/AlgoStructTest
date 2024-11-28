@@ -1,7 +1,8 @@
 ﻿using AlgoStructTester.Tab;
-using DataBase;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using Tests;
@@ -17,7 +18,6 @@ namespace AlgoStructTester
     /// </summary>
     public partial class MainWindow : Window
     {
-        TestingSystemEntities appDbContext;
         SortTester tester;
         PCConfig _PCConfig;
         DynamicTabItem dynamicTabItem;
@@ -25,13 +25,28 @@ namespace AlgoStructTester
 
         public MainWindow()
         {
-            InitializeComponent();
+            // Перевірка наявності рядка підключення
+            string connectionName = "TestingSystemEntities";
+            var connectionString = ConfigurationManager.ConnectionStrings[connectionName];
 
-            appDbContext = new TestingSystemEntities();
+            if (connectionString != null)
+            {
+                Console.WriteLine($"Connection string '{connectionName}' found:");
+                Console.WriteLine("Connection String: " + connectionString.ConnectionString);
+            }
+            else
+            {
+                Console.WriteLine($"Connection string '{connectionName}' not found.");
+            }
+
+            InitializeComponent();
 
             _PCConfig = new PCConfig();
             sortsControl = new SortsControl(MainTabControl);
+
+            //PCConfigControl pcConfigControl = new PCConfigControl();
         }
+
 
         private void Close_Click(object sender, RoutedEventArgs e)
         {
