@@ -1,11 +1,17 @@
-﻿namespace ServerAPI.DataBase.Models
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DataBaseModels.Models
 {
     public class RAM_Config
     {
-        public int Id {  get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
-        public int TotalVisibleMemorySize {  get; set; }
-        public int Speed {  get; set; }
+        public int TotalVisibleMemorySize { get; set; }
+        public int Speed { get; set; }
 
         public ICollection<PC_Config> PC_Configs { get; set; }
 

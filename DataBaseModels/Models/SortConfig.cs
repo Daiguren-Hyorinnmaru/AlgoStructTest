@@ -1,6 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ServerAPI.DataBase.Models
+namespace DataBaseModels.Models
 {
     public class SortConfig
     {
@@ -8,6 +12,7 @@ namespace ServerAPI.DataBase.Models
         public int SortsAlgorithmId { get; set; }
         public int SortsCollectionId { get; set; }
         public int DataTypeId { get; set; }
+        public int Length { get; set; }
 
         public SortsAlgorithm? SortsAlgorithm { get; set; }
         public SortCollectionType? SortsCollectionType { get; set; }

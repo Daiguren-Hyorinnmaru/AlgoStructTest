@@ -1,10 +1,16 @@
-﻿namespace ServerAPI.DataBase.Models
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DataBaseModels.Models
 {
     public class PC_Config
     {
-        public int Id {  get; set; }
-        public int CPU_Id {  get; set; }
-        public int RAM_Id {  get; set; }
+        public int Id { get; set; }
+        public int CPU_Id { get; set; }
+        public int RAM_Id { get; set; }
 
         public CPU_Config? CPU_Config { get; set; }
         public RAM_Config? RAM_Config { get; set; }

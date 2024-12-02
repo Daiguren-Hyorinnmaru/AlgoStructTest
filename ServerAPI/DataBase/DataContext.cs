@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ServerAPI.DataBase.Models;
+using DataBaseModels.Models;
 using System.Data.SqlClient;
 
 namespace ServerAPI.DataBase
 {
     public partial class DataContext : DbContext
     {
-        public DbSet<CPU_Config> CPUConfig { get; set; } = null!;
+        public DbSet<CPU_Config> CPU_Config { get; set; } = null!;
         public DbSet<DataType> DataType { get; set; } = null!;
         public DbSet<PC_Config> PC_Config { get; set; } = null!;
         public DbSet<RAM_Config> RAM_Config { get; set; } = null!;

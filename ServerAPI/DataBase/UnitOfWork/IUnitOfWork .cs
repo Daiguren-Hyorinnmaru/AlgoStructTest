@@ -1,5 +1,4 @@
-﻿using ServerAPI.DataBase.Models;
-using ServerAPI.DataBase.Repository;
+﻿using ServerAPI.DataBase.Repository;
 
 namespace ServerAPI.DataBase.UnitOfWork
 {

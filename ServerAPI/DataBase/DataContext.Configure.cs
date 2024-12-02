@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ServerAPI.DataBase.Models;
+using DataBaseModels.Models;
 using System.Reflection.Emit;
 
 namespace ServerAPI.DataBase
@@ -61,7 +61,19 @@ namespace ServerAPI.DataBase
         {
             var entity = modelBuilder.Entity<SortConfig>();
 
-            entity.HasKey(sc => sc.Id); 
+            entity.HasKey(sc => sc.Id);
+
+            entity.Property(sct => sct.SortsAlgorithmId)
+                  .IsRequired();
+
+            entity.Property(sct => sct.SortsCollectionId)
+                  .IsRequired();
+
+            entity.Property(sct => sct.DataTypeId)
+                  .IsRequired();
+
+            entity.Property(sct => sct.Length)
+                  .IsRequired();
 
             entity.HasOne(sc => sc.SortsAlgorithm)
                   .WithMany(sa => sa.SortConfigs) 
@@ -129,7 +141,13 @@ namespace ServerAPI.DataBase
         {
             var entity = modelBuilder.Entity<PC_Config>();
 
-            entity.HasKey(sc => sc.Id); 
+            entity.HasKey(sc => sc.Id);
+
+            entity.Property(sct => sct.CPU_Id)
+                  .IsRequired();
+
+            entity.Property(sct => sct.RAM_Id)
+                  .IsRequired();
 
             entity.HasOne(sc => sc.CPU_Config)
                   .WithMany(sct => sct.PC_Configs) 
@@ -150,6 +168,15 @@ namespace ServerAPI.DataBase
             var entity = modelBuilder.Entity<SortResult>();
 
             entity.HasKey(sc => sc.Id);
+
+            entity.Property(sct => sct.SortConfigId)
+                  .IsRequired();
+
+            entity.Property(sct => sct.PC_ConfigId)
+                  .IsRequired();
+
+            entity.Property(sct => sct.Speed)
+                  .IsRequired();
 
             entity.HasOne(sc => sc.SortConfig)
                   .WithMany(sct => sct.SortResults)

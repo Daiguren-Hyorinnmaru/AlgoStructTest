@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ServerAPI.DataBase.Models;
+using DataBaseModels.Models;
 using ServerAPI.DataBase.Repository;
 
 namespace ServerAPI.DataBase.UnitOfWork
@@ -21,65 +21,107 @@ namespace ServerAPI.DataBase.UnitOfWork
             _sortConfigRepository = new Repository<SortConfig>(context);
         }
 
-        public async Task AddSortConfigAsync(string algorithmName, string collectionName, string dataTypeName)
+        public async Task<int> AddOrGetSortConfigIdAsync(SortsAlgorithm algorithm, SortCollectionType collectionType, DataType dataType)
         {
-            // Починаємо транзакцію для забезпечення атомарності операцій
+            // Begin a transaction to ensure atomicity
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    // Шукаємо або створюємо алгоритм
-                    var algorithm = (await _algorithmRepository.FindAsync(a => a.NameAlgorithm == algorithmName))
-                                    .FirstOrDefault();
-                    if (algorithm == null)
+                    // Get or add algorithm
+                    var algorithmId = await GetOrAddAlgorithmAsync(algorithm);
+
+                    // Get or add collection type
+                    var collectionTypeId = await GetOrAddCollectionTypeAsync(collectionType);
+
+                    // Get or add data type
+                    var dataTypeId = await GetOrAddDataTypeAsync(dataType);
+
+                    // Create a new SortConfig instance
+                    SortConfig newConfig = new SortConfig
                     {
-                        algorithm = new SortsAlgorithm { NameAlgorithm = algorithmName };
-                        await _algorithmRepository.AddAsync(algorithm);
+                        SortsAlgorithmId = algorithmId,
+                        SortsCollectionId = collectionTypeId,
+                        DataTypeId = dataTypeId
+                    };
+
+                    // Check if configuration already exists
+                    var existingConfig = await _sortConfigRepository.FindAsync(sc =>
+                        newConfig.DataTypeId == dataTypeId &&
+                        newConfig.SortsAlgorithmId == algorithmId &&
+                        newConfig.SortsCollectionId == collectionTypeId);
+
+                    if (existingConfig.Any())
+                    {
+                        return existingConfig.First().Id; // Return existing configuration Id
                     }
 
-                    // Шукаємо або створюємо тип колекції
-                    var collection = (await _collectionRepository.FindAsync(c => c.NameCollection == collectionName))
-                                     .FirstOrDefault();
-                    if (collection == null)
-                    {
-                        collection = new SortCollectionType { NameCollection = collectionName };
-                        await _collectionRepository.AddAsync(collection);
-                    }
+                    // Add the new configuration if it does not exist
+                    await _sortConfigRepository.AddAsync(newConfig);
+                    await _context.SaveChangesAsync();
 
-                    // Шукаємо або створюємо тип даних
-                    var dataType = (await _dataTypeRepository.FindAsync(dt => dt.NameDataType == dataTypeName))
-                                   .FirstOrDefault();
-                    if (dataType == null)
-                    {
-                        dataType = new DataType { NameDataType = dataTypeName };
-                        await _dataTypeRepository.AddAsync(dataType);
-                    }
-
-                    SortConfig config = new SortConfig();
-                    // Прив'язуємо знайдені або створені сутності до конфігурації
-                    config.SortsAlgorithm = algorithm;
-                    config.SortsCollectionType = collection;
-                    config.DataType = dataType;
-
-                    // Перевірка на існування конфігурації перед додаванням
-                    //if (!await _sortConfigRepository.ExistsAsync(config))
-                    {
-                        // Додаємо нову конфігурацію
-                        await _sortConfigRepository.AddAsync(config);
-                        await _context.SaveChangesAsync(); // Зберігаємо зміни
-                    }
-
-                    // Підтверджуємо транзакцію
+                    // Commit the transaction
                     await transaction.CommitAsync();
+
+                    return newConfig.Id; // Return new configuration Id
                 }
                 catch (Exception)
                 {
-                    // Якщо сталася помилка, відкатуємо транзакцію
+                    // Roll back the transaction in case of an error
                     await transaction.RollbackAsync();
                     throw;
                 }
             }
         }
+
+        // Get or add algorithm
+        private async Task<int> GetOrAddAlgorithmAsync(SortsAlgorithm algorithm)
+        {
+            var existingAlgorithm = await _algorithmRepository.FindAsync(a => a.NameAlgorithm == algorithm.NameAlgorithm);
+
+            if (existingAlgorithm.Any())
+            {
+                return existingAlgorithm.First().Id; // Return existing algorithm Id
+            }
+
+            await _algorithmRepository.AddAsync(algorithm);
+            await _context.SaveChangesAsync();
+
+            return algorithm.Id; // Return newly created algorithm Id
+        }
+
+        // Get or add collection type
+        private async Task<int> GetOrAddCollectionTypeAsync(SortCollectionType collectionType)
+        {
+            var existingCollection = await _collectionRepository.FindAsync(c => c.NameCollection == collectionType.NameCollection);
+
+            if (existingCollection.Any())
+            {
+                return existingCollection.First().Id; // Return existing collection type Id
+            }
+
+            await _collectionRepository.AddAsync(collectionType);
+            await _context.SaveChangesAsync();
+
+            return collectionType.Id; // Return newly created collection type Id
+        }
+
+        // Get or add data type
+        private async Task<int> GetOrAddDataTypeAsync(DataType dataType)
+        {
+            var existingDataType = await _dataTypeRepository.FindAsync(dt => dt.NameDataType == dataType.NameDataType);
+
+            if (existingDataType.Any())
+            {
+                return existingDataType.First().Id; // Return existing data type Id
+            }
+
+            await _dataTypeRepository.AddAsync(dataType);
+            await _context.SaveChangesAsync();
+
+            return dataType.Id; // Return newly created data type Id
+        }
+
 
 
     }

@@ -1,10 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ServerAPI.DataBase;
-using ServerAPI.DataBase.Models;
+using DataBaseModels.Models;
 using ServerAPI.DataBase.Repository;
 using ServerAPI.DataBase.UnitOfWork;
-using System.Security.Cryptography;
-using System.Data.SqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -128,12 +126,30 @@ async void MyStartupAction()
         var configs = repositoryConfig.GetAllAsync().Result;
         foreach (var config in configs)
         {
-            Console.WriteLine($"{config.Id}");
+            Console.WriteLine($"SortConfig Id:{config.Id}");
             Console.WriteLine($"    SortsAlgorithm Id: {config.SortsAlgorithm?.Id}");
             Console.WriteLine($"    SortsAlgorithm Name: {config.SortsAlgorithm?.NameAlgorithm}");
             Console.WriteLine($"    SortCollectionType Name: {config.SortsCollectionType?.NameCollection}");
             Console.WriteLine($"    DataType Name: {config.DataType?.NameDataType}");
         }
+
+        SortConfigManager sortConfigManager1 = new SortConfigManager(context);
+
+        SortsAlgorithm sortsAlgorithm = new SortsAlgorithm() { NameAlgorithm = "addTestSortsAlgorithm" };
+        SortCollectionType sortCollectionType = new SortCollectionType() { NameCollection = "addTestSortCollectionType" };
+        DataType type = new DataType() { NameDataType = "addTestDataType" };
+
+        int ID = await sortConfigManager1.AddOrGetSortConfigIdAsync(sortsAlgorithm, sortCollectionType, type);
+
+        Console.WriteLine("new ID " + ID);
+
+        SortConfig config1 = repositoryConfig.GetByIdAsync(ID).Result;
+
+        Console.WriteLine($"SortConfig Id:{config1.Id}");
+        Console.WriteLine($"    SortsAlgorithm Id: {config1.SortsAlgorithm?.Id}");
+        Console.WriteLine($"    SortsAlgorithm Name: {config1.SortsAlgorithm?.NameAlgorithm}");
+        Console.WriteLine($"    SortCollectionType Name: {config1.SortsCollectionType?.NameCollection}");
+        Console.WriteLine($"    DataType Name: {config1.DataType?.NameDataType}");
 
         Console.WriteLine("SortConfig added successfully!");
     }
