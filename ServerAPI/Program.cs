@@ -3,6 +3,7 @@ using ServerAPI.DataBase;
 using DataBaseModels.Models;
 using ServerAPI.DataBase.Repository;
 using ServerAPI.DataBase.UnitOfWork;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,8 +11,6 @@ builder.Services.AddDbContext<DataContext>(options => options.UseSqlite("Data So
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
-builder.Services.AddTransient<SortConfigManager>();
 
 var app = builder.Build();
 
@@ -35,122 +34,31 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 //to delete
-MyStartupAction();
+//MyStartupAction();
 
 app.Run();
 
 //to delete
 async void MyStartupAction()
 {
-    Console.WriteLine("Start API!");
+    Console.WriteLine("Start MyStartupAction");
 
     using (var scope = app.Services.CreateScope())
     {
         var context = scope.ServiceProvider.GetRequiredService<DataContext>();
+        Repository<PC_Config> repository = new(context);
+        Repository<SortResult> sortrepository = new(context);
+        Repository<PathfindingResults> Pathfindingsortrepository = new(context);
 
-        var dataTypeRepository = new Repository<DataType>(context);
-        var sortCollectionRepository = new Repository<SortCollectionType>(context);
-        var sortAlgorithmRepository = new Repository<SortsAlgorithm>(context);
+        IEnumerable<PathfindingResults> t = await Pathfindingsortrepository.GetAllAsync();
 
-        var algorithmNames = new[] { "QuickSort", "MergeSort", "BubbleSort" };
-        foreach (var algorithmName in algorithmNames)
+        foreach(PathfindingResults i in t)
         {
-            var newAlgorithm = new SortsAlgorithm { NameAlgorithm = algorithmName };
-            sortAlgorithmRepository.AddAsync(newAlgorithm).Wait();
+            Console.WriteLine(i.Id);
+            Console.WriteLine("  Time" + i.Time);
+            Console.WriteLine("  LengthPath" + i.LengthPath);
+            Console.WriteLine("  Algotithm" + i.Algotithm);
         }
-
-        var dataTypes = new[] { "Integer", "String", "Float" };
-        foreach (var dataType in dataTypes)
-        {
-            var newDataType = new DataType { NameDataType = dataType };
-            dataTypeRepository.AddAsync(newDataType).Wait();
-        }
-
-        var collectionTypes = new[] { "Array", "List", "Queue" };
-        foreach (var collectionType in collectionTypes)
-        {
-            var newCollectionType = new SortCollectionType { NameCollection = collectionType };
-            sortCollectionRepository.AddAsync(newCollectionType).Wait();
-        }
-
-        ContextSave.SaveChangesAsync(context);
-
-
-        SortConfigManager sortConfigManager = new SortConfigManager(context);
-        var SortConfigManagerRepository = new Repository<SortConfig>(context);
-        foreach (var algorithmName in algorithmNames)
-        {
-            foreach (var collectionType in collectionTypes)
-            {
-                foreach (var dataType in dataTypes)
-                {
-                    SortConfig config = new SortConfig()
-                    {
-                        SortsAlgorithmId = sortAlgorithmRepository.FindAsync(a => a.NameAlgorithm == algorithmName).Result.FirstOrDefault().Id,
-                        SortsCollectionId = sortCollectionRepository.FindAsync(a => a.NameCollection == collectionType).Result.FirstOrDefault().Id,
-                        DataTypeId = dataTypeRepository.FindAsync(a => a.NameDataType == dataType).Result.FirstOrDefault().Id,
-                    };
-                    SortConfigManagerRepository.AddAsync(config).Wait();
-                }
-            }
-        }
-
-        ContextSave.SaveChangesAsync(context);
-
-        Console.WriteLine($"SortsAlgorithm");
-        var algorithms = sortAlgorithmRepository.GetAllAsync().Result;
-        foreach (var algorithm in algorithms)
-        {
-            Console.WriteLine($"{algorithm.Id}");
-            Console.WriteLine($"    {algorithm.NameAlgorithm}");
-        }
-
-        Console.WriteLine($"SortCollectionType");
-        var collections = sortCollectionRepository.GetAllAsync().Result;
-        foreach (var collection in collections)
-        {
-            Console.WriteLine($"{collection.Id}");
-            Console.WriteLine($"    {collection.NameCollection}");
-        }
-
-        Console.WriteLine($"DataType");
-        var dataTypesRepository = dataTypeRepository.GetAllAsync().Result;
-        foreach (var dataType in dataTypesRepository)
-        {
-            Console.WriteLine($"{dataType.Id}");
-            Console.WriteLine($"    {dataType.NameDataType}");
-        }
-
-        Console.WriteLine($"SortConfig");
-        var repositoryConfig = new Repository<SortConfig>(context);
-        var configs = repositoryConfig.GetAllAsync().Result;
-        foreach (var config in configs)
-        {
-            Console.WriteLine($"SortConfig Id:{config.Id}");
-            Console.WriteLine($"    SortsAlgorithm Id: {config.SortsAlgorithm?.Id}");
-            Console.WriteLine($"    SortsAlgorithm Name: {config.SortsAlgorithm?.NameAlgorithm}");
-            Console.WriteLine($"    SortCollectionType Name: {config.SortsCollectionType?.NameCollection}");
-            Console.WriteLine($"    DataType Name: {config.DataType?.NameDataType}");
-        }
-
-        SortConfigManager sortConfigManager1 = new SortConfigManager(context);
-
-        SortsAlgorithm sortsAlgorithm = new SortsAlgorithm() { NameAlgorithm = "addTestSortsAlgorithm" };
-        SortCollectionType sortCollectionType = new SortCollectionType() { NameCollection = "addTestSortCollectionType" };
-        DataType type = new DataType() { NameDataType = "addTestDataType" };
-
-        int ID = await sortConfigManager1.AddOrGetSortConfigIdAsync(sortsAlgorithm, sortCollectionType, type);
-
-        Console.WriteLine("new ID " + ID);
-
-        SortConfig config1 = repositoryConfig.GetByIdAsync(ID).Result;
-
-        Console.WriteLine($"SortConfig Id:{config1.Id}");
-        Console.WriteLine($"    SortsAlgorithm Id: {config1.SortsAlgorithm?.Id}");
-        Console.WriteLine($"    SortsAlgorithm Name: {config1.SortsAlgorithm?.NameAlgorithm}");
-        Console.WriteLine($"    SortCollectionType Name: {config1.SortsCollectionType?.NameCollection}");
-        Console.WriteLine($"    DataType Name: {config1.DataType?.NameDataType}");
-
-        Console.WriteLine("SortConfig added successfully!");
     }
+    Console.WriteLine("End MyStartupAction");
 }

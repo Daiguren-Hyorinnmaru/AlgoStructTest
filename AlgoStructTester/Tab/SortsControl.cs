@@ -28,7 +28,7 @@ namespace AlgoStructTester.Tab
         private DynamicTabItem dynamicTabItem;
         private SortParams sortParams;
         private SortTester sortTester;
-        private ConcurrentQueue<SortResult> sortResults;
+        public  ConcurrentQueue<SortResult> sortResults;
 
         public SortsControl(TabControl tabControl)
         {
@@ -38,7 +38,7 @@ namespace AlgoStructTester.Tab
             sortTester = new SortTester();
             sortResults = new ConcurrentQueue<SortResult>();
             CreateUI();
-            TakeResult();
+            SetResult();
         }
 
         public void CreateUI()
@@ -60,9 +60,9 @@ namespace AlgoStructTester.Tab
             dynamicTabItem.AddColumn(DataType.Double.GetType().Name, list.ToArray());
             list.Clear();
 
-            list.Add((sortUI.LengthStart, UIFactory.CreateTextBox(sortUI.LengthStart.ToString(), "10", typeof(int))));
-            list.Add((sortUI.LengthEnd, UIFactory.CreateTextBox(sortUI.LengthEnd.ToString(), "100", typeof(int))));
-            list.Add((sortUI.Step, UIFactory.CreateTextBox(sortUI.Step.ToString(), "10", typeof(int))));
+            list.Add((sortUI.LengthStart, UIFactory.CreateTextBox(sortUI.LengthStart.ToString(), "100", typeof(int))));
+            list.Add((sortUI.LengthEnd, UIFactory.CreateTextBox(sortUI.LengthEnd.ToString(), "10000", typeof(int))));
+            list.Add((sortUI.Step, UIFactory.CreateTextBox(sortUI.Step.ToString(), "100", typeof(int))));
             dynamicTabItem.AddColumn("Length", list.ToArray());
             list.Clear();
         }
@@ -112,7 +112,14 @@ namespace AlgoStructTester.Tab
             TakeParams();
             sortTester.SortTestRun(sortParams, new DataParams());
         }
-        private async void TakeResult()
+
+        public SortResult TakeResult()
+        {
+            if (sortResults.TryDequeue(out var result)) return result;
+            return null;
+        }
+
+        private async void SetResult()
         {
             while (true)
             {

@@ -108,6 +108,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="PCConfig.cs" />
+    <Compile Include="ResultManage.cs" />
+    <Compile Include="Tab\PathfindingControl.cs" />
     <Compile Include="Tab\SortsControl.cs" />
     <Compile Include="UI\UIFactory.cs" />
     <Page Include="MainWindow.xaml">

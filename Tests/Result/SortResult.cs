@@ -9,6 +9,6 @@ namespace Tests.Result
         public DataType DataType { get; set; }
         public SortsAlgorithms Algorithm { get; set; }
         public int Length { get; set; }
-        public long Time { get; set; }
+        public int Time { get; set; }
     }
 }

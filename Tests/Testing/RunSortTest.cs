@@ -8,7 +8,7 @@ using Tests.Result;
 
 namespace Tests.Testing
 {
-    internal class RunTest
+    internal class RunSortTest
     {
         private readonly SortTestFactory _sortTestFactory;
 
@@ -19,7 +19,7 @@ namespace Tests.Testing
         private readonly CancellationToken _cancellationToken;
         public event Action<SortResult> OnResultAdded;
 
-        public RunTest(SortTestFactory sortTestFactory)
+        public RunSortTest(SortTestFactory sortTestFactory)
         {
             _actionQueue = new ConcurrentQueue<(SortResult, Action)>();
             _sortTestFactory = sortTestFactory;
@@ -50,7 +50,7 @@ namespace Tests.Testing
 
                     invokeTest.TimeReset();
                     invokeTest.Run(action);
-                    sortResult.Time = invokeTest.GetTime();
+                    sortResult.Time = (int)invokeTest.GetTime();
 
                     // Notify that a result has been added
                     OnResultAdded?.Invoke(sortResult);
@@ -66,6 +66,10 @@ namespace Tests.Testing
         // Method to add actions to the queue when sorting results are available
         private void EnqueueActions(List<(SortResult, Action)> actionTuple)
         {
+            //while(_actionQueue.Count > 5)
+            //{
+            //    //Task.WaitAll(10);
+            //}
             foreach (var item in actionTuple)
             {
                 _actionQueue.Enqueue(item);

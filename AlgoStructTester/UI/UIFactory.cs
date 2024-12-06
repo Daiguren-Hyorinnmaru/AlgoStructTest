@@ -73,7 +73,7 @@ namespace AlgoStructTester.UI
             return new CheckBox
             {
                 Content = content,
-                IsChecked = false, // Початково встановлюємо стан "Unchecked"
+                IsChecked = true,
             };
         }
 

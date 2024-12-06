@@ -2,6 +2,6 @@
 {
     internal interface IResult
     {
-        long Time { get; set; }
+        int Time { get; set; }
     }
 }

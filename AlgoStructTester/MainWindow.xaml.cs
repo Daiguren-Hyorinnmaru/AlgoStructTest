@@ -8,8 +8,10 @@ using System.Windows.Controls;
 using Tests;
 using Tests.Algorithms;
 using Tests.Factory;
+using Tests.Graph;
 using Tests.Params;
 using Tests.Result;
+using Tests.Testing;
 
 namespace AlgoStructTester
 {
@@ -22,6 +24,7 @@ namespace AlgoStructTester
         PCConfig _PCConfig;
         DynamicTabItem dynamicTabItem;
         SortsControl sortsControl;
+        PathfindingControl pathfindingControl;
 
         public MainWindow()
         {
@@ -43,10 +46,11 @@ namespace AlgoStructTester
 
             _PCConfig = new PCConfig();
             sortsControl = new SortsControl(MainTabControl);
+            pathfindingControl = new PathfindingControl(MainTabControl);
 
-            //PCConfigControl pcConfigControl = new PCConfigControl();
+            ResultManage resultManage = new ResultManage(sortsControl, pathfindingControl);
+
         }
-
 
         private void Close_Click(object sender, RoutedEventArgs e)
         {
@@ -85,6 +89,17 @@ namespace AlgoStructTester
 
         private void Sort_Click(object sender, RoutedEventArgs e)
         {
+            sortsControl.Tests();
+        }
+
+        private void Pathfinding_Click(object sender, RoutedEventArgs e)
+        {
+            pathfindingControl.Tests();
+        }
+
+        private void StartAll(object sender, RoutedEventArgs e)
+        {
+            pathfindingControl.Tests();
             sortsControl.Tests();
         }
     }

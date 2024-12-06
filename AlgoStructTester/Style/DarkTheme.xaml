@@ -3,21 +3,56 @@
 
     <!-- Стиль для TabControl -->
     <Style TargetType="TabControl">
-        <Setter Property="Background" Value="DarkSlateGray"/>
-        <Setter Property="Padding" Value="10"/>
+        <Setter Property="Background" Value="#FF3B3B3B"/>
+        <Setter Property="Padding" Value="-10"/>
     </Style>
 
     <!-- Стиль для TabItem -->
     <Style TargetType="TabItem">
-        <Setter Property="Padding" Value="10,5"/>
-        <Setter Property="Margin" Value="2"/>
-        <Setter Property="Background" Value="#FF2B2B2B"/>
-        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Padding" Value="10,5" />
+        <Setter Property="Margin" Value="2" />
+        <Setter Property="Background" Value="#FF2B2B2B" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="BorderBrush" Value="#FF555555" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabItem">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <ContentPresenter ContentSource="Header"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          Margin="{TemplateBinding Padding}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!-- Тригер для вибраного стану -->
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="#FF444444" />
+                            <Setter Property="BorderBrush" Value="#FFAAAAAA" />
+                            <Setter Property="BorderThickness" Value="2" />
+                        </Trigger>
+                        <!-- Тригер для стану наведення -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#FF3B3B3B" />
+                            <Setter Property="BorderBrush" Value="#FF888888" />
+                        </Trigger>
+                        <!-- Тригер для стану вимкнення -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="#FFAAAAAA" />
+                            <Setter Property="Background" Value="#FF2B2B2B" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!-- Стиль для Grid -->
     <Style TargetType="Grid">
-        <Setter Property="Margin" Value="10"/>
+        <!--<Setter Property="Margin" Value="10"/>-->
+        <Setter Property="Margin" Value="17,15,10,15"/>
         <Setter Property="Background" Value="#FF3A3A3A"/>
     </Style>
 
@@ -85,5 +120,41 @@
         </Setter>
     </Style>
 
+    <Style TargetType="Button">
+        <Setter Property="Background" Value="#333333" />
+        <Setter Property="BorderBrush" Value="#555555" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="10,5" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <ContentPresenter HorizontalAlignment="Center" 
+                                          VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!-- Ефект наведення -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#444444" />
+                            <Setter Property="BorderBrush" Value="#777777" />
+                        </Trigger>
+                        <!-- Ефект натискання -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="#222222" />
+                            <Setter Property="BorderBrush" Value="#999999" />
+                        </Trigger>
+                        <!-- Ефект вимкненої кнопки -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Background" Value="#666666" />
+                            <Setter Property="BorderBrush" Value="#444444" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 </ResourceDictionary>

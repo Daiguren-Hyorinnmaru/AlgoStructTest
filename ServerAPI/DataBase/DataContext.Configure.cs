@@ -8,91 +8,12 @@ namespace ServerAPI.DataBase
     {
         private void ConfigSet(ModelBuilder modelBuilder)
         {
-            ConfigureSortsAlgorithm(modelBuilder);
-            ConfigureDataType(modelBuilder);
-            ConfigureSortCollectionType(modelBuilder);
-            ConfigureSortConfig(modelBuilder);
             ConfigureRAM_Config(modelBuilder);
             ConfigureCPU_Config(modelBuilder);
             ConfigurePC_Config(modelBuilder);
             ConfigureSortResult(modelBuilder);
         }
 
-        private void ConfigureSortsAlgorithm(ModelBuilder modelBuilder)
-        {
-            var entity = modelBuilder.Entity<SortsAlgorithm>();
-
-            entity.HasKey(sa => sa.Id);
-            entity.Property(sa => sa.NameAlgorithm)
-                  .IsRequired()
-                  .HasMaxLength(100);
-
-            entity.HasIndex(sa => sa.NameAlgorithm)
-                  .IsUnique();
-        }
-
-        private void ConfigureDataType(ModelBuilder modelBuilder)
-        {
-            var entity = modelBuilder.Entity<DataType>();
-
-            entity.HasKey(dt => dt.Id);
-            entity.Property(dt => dt.NameDataType)
-                  .IsRequired()
-                  .HasMaxLength(100);
-
-            entity.HasIndex(dt => dt.NameDataType)
-                  .IsUnique();
-        }
-
-        private void ConfigureSortCollectionType(ModelBuilder modelBuilder)
-        {
-            var entity = modelBuilder.Entity<SortCollectionType>();
-
-            entity.HasKey(sct => sct.Id);
-            entity.Property(sct => sct.NameCollection)
-                  .IsRequired()
-                  .HasMaxLength(100);
-
-            entity.HasIndex(sct => sct.NameCollection)
-                  .IsUnique();
-        }
-
-        private void ConfigureSortConfig(ModelBuilder modelBuilder)
-        {
-            var entity = modelBuilder.Entity<SortConfig>();
-
-            entity.HasKey(sc => sc.Id);
-
-            entity.Property(sct => sct.SortsAlgorithmId)
-                  .IsRequired();
-
-            entity.Property(sct => sct.SortsCollectionId)
-                  .IsRequired();
-
-            entity.Property(sct => sct.DataTypeId)
-                  .IsRequired();
-
-            entity.Property(sct => sct.Length)
-                  .IsRequired();
-
-            entity.HasOne(sc => sc.SortsAlgorithm)
-                  .WithMany(sa => sa.SortConfigs) 
-                  .HasForeignKey(sc => sc.SortsAlgorithmId)
-                  .OnDelete(DeleteBehavior.Cascade); 
-
-            entity.HasOne(sc => sc.SortsCollectionType)
-                  .WithMany(sct => sct.SortConfigs)
-                  .HasForeignKey(sc => sc.SortsCollectionId)
-                  .OnDelete(DeleteBehavior.Cascade);
-
-            entity.HasOne(sc => sc.DataType)
-                  .WithMany(dt => dt.SortConfigs) 
-                  .HasForeignKey(sc => sc.DataTypeId)
-                  .OnDelete(DeleteBehavior.Cascade);
-
-            entity.HasIndex(sc => new { sc.SortsAlgorithmId, sc.SortsCollectionId, sc.DataTypeId })
-                  .IsUnique(); 
-        }
 
         private void ConfigureRAM_Config(ModelBuilder modelBuilder)
         {
@@ -101,11 +22,11 @@ namespace ServerAPI.DataBase
             entity.HasKey(sa => sa.Id);
 
             entity.Property(sa => sa.Name)
-                  .IsRequired() 
-                  .HasMaxLength(100); 
+                  .IsRequired()
+                  .HasMaxLength(100);
 
             entity.Property(sa => sa.TotalVisibleMemorySize)
-                  .IsRequired(); 
+                  .IsRequired();
 
             entity.Property(sa => sa.Speed)
                   .IsRequired();
@@ -121,8 +42,8 @@ namespace ServerAPI.DataBase
             entity.HasKey(sa => sa.Id);
 
             entity.Property(sa => sa.Name)
-                  .IsRequired() 
-                  .HasMaxLength(100); 
+                  .IsRequired()
+                  .HasMaxLength(100);
 
             entity.Property(sa => sa.NumberOfCores)
                   .IsRequired();
@@ -131,10 +52,10 @@ namespace ServerAPI.DataBase
                   .IsRequired();
 
             entity.Property(sa => sa.MaxClockSpeed)
-                  .IsRequired(); 
+                  .IsRequired();
 
             entity.HasIndex(sc => new { sc.Name, sc.NumberOfCores, sc.ThreadCount, sc.MaxClockSpeed })
-                  .IsUnique(); 
+                  .IsUnique();
         }
 
         private void ConfigurePC_Config(ModelBuilder modelBuilder)
@@ -150,16 +71,16 @@ namespace ServerAPI.DataBase
                   .IsRequired();
 
             entity.HasOne(sc => sc.CPU_Config)
-                  .WithMany(sct => sct.PC_Configs) 
+                  .WithMany(sct => sct.PC_Configs)
                   .HasForeignKey(sc => sc.CPU_Id)
-                  .OnDelete(DeleteBehavior.Cascade); 
+                  .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(sc => sc.RAM_Config)
-                  .WithMany(sct => sct.PC_Configs) 
+                  .WithMany(sct => sct.PC_Configs)
                   .HasForeignKey(sc => sc.RAM_Id)
                   .OnDelete(DeleteBehavior.Cascade);
 
-            entity.HasIndex(sc => new { sc.CPU_Id, sc.RAM_Id})
+            entity.HasIndex(sc => new { sc.CPU_Id, sc.RAM_Id })
                   .IsUnique();
         }
 
@@ -169,23 +90,30 @@ namespace ServerAPI.DataBase
 
             entity.HasKey(sc => sc.Id);
 
-            entity.Property(sct => sct.SortConfigId)
-                  .IsRequired();
-
-            entity.Property(sct => sct.PC_ConfigId)
-                  .IsRequired();
-
-            entity.Property(sct => sct.Speed)
-                  .IsRequired();
-
-            entity.HasOne(sc => sc.SortConfig)
-                  .WithMany(sct => sct.SortResults)
-                  .HasForeignKey(sc => sc.SortConfigId)
-                  .OnDelete(DeleteBehavior.Cascade);
+            entity.Property(sct => sct.Time).IsRequired();
+            entity.Property(sct => sct.Length).IsRequired();
+            entity.Property(sct => sct.AlgorithmType).IsRequired();
+            entity.Property(sct => sct.CollectionType).IsRequired();
+            entity.Property(sct => sct.DataType).IsRequired();
 
             entity.HasOne(sc => sc.PC_Config)
-                  .WithMany(sct => sct.SortResults) 
-                  .HasForeignKey(sc => sc.PC_ConfigId)
+                  .WithMany(sct => sct.SortResults)
+                  .HasForeignKey(sc => sc.IDpcConfig)
+                  .OnDelete(DeleteBehavior.Cascade);
+        }
+        private void ConfigurePathfindingResults(ModelBuilder modelBuilder)
+        {
+            var entity = modelBuilder.Entity<PathfindingResults>();
+
+            entity.HasKey(sc => sc.Id);
+
+            entity.Property(sct => sct.Time).IsRequired();
+            entity.Property(sct => sct.LengthPath).IsRequired();
+            entity.Property(sct => sct.Algotithm).IsRequired();
+
+            entity.HasOne(sc => sc.PC_Config)
+                  .WithMany(sct => sct.PathfindingResults)
+                  .HasForeignKey(sc => sc.IDpcConfig)
                   .OnDelete(DeleteBehavior.Cascade);
         }
     }

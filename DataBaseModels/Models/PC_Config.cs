@@ -15,6 +15,7 @@ namespace DataBaseModels.Models
         public CPU_Config? CPU_Config { get; set; }
         public RAM_Config? RAM_Config { get; set; }
         public ICollection<SortResult> SortResults { get; set; }
+        public ICollection<PathfindingResults> PathfindingResults { get; set; }
 
         public override bool Equals(object? obj)
         {
