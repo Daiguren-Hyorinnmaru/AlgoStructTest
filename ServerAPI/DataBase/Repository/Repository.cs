@@ -36,5 +36,12 @@ namespace ServerAPI.DataBase.Repository
 
         public void RemoveRange(IEnumerable<T> entities) => _dbSet.RemoveRange(entities);
 
+        public async Task<IEnumerable<TProp>> GetDistinctAsync<TProp>(Expression<Func<T, TProp>> selector)
+        {
+            return await _dbSet
+                .Select(selector)
+                .Distinct()
+                .ToListAsync();
+        }
     }
 }

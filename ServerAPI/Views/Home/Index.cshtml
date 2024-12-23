@@ -24,9 +24,29 @@
         }
 
         .chart-container {
-            background-color: #1e1e1e;
+            background-color: #121212;
             padding: 20px;
             border-radius: 8px;
+        }
+
+        /* Світлий текст для таблиці */
+        .table,
+        .table th,
+        .table td {
+            color: #fff; /* Світлий текст */
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(255, 255, 255, 0.1); /* Світліше фону для непарних рядків */
+        }
+
+        .table-striped tbody tr:nth-of-type(even) {
+            background-color: rgba(255, 255, 255, 0.05); /* Світліший фон для парних рядків */
+        }
+
+        /* Колір фону заголовка таблиці */
+        .table thead {
+            background-color: #343a40;
         }
     </style>
 </head>
@@ -37,21 +57,37 @@
     <div class="container mt-4">
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="true">Вкладка 1</button>
+                <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="true">Sort panel</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="false">Вкладка 2</button>
+                <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="false">Pathfinding panel</button>
             </li>
         </ul>
         <div class="tab-content" id="myTabContent">
-            <!-- Вкладка 1 -->
+            <!-- Sort panel -->
             <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
                 <div class="row">
                     <div class="col-md-4 sidebar">
-                        <h5>Параметри</h5>
-                        <button id="updateChart1" class="btn btn-primary mb-3">Перебудувати графік</button>
+                        <button id="updateChart1" class="btn btn-primary mb-3">Build a chart</button>
+                        <h5>Parameters</h5>
                         <div>
-                            <label class="form-label mt-3">Параметр 1:</label>
+                            <label class="form-label mt-3">CPU name:</label>
+                            @if (Model.Sort.NameCPU?.Any() == true)
+                            {
+                                <select class="form-select" name="SortNameCPU" id="SortnameCPUSelect">
+                                    @foreach (var option in Model.Sort.NameCPU)
+                                    {
+                                        <option value="@option">@option</option>
+                                    }
+                                </select>
+                            }
+                            else
+                            {
+                                <p>There are no options available for the CPU parameter.</p>
+                            }
+                        </div>
+                        <div>
+                            <label class="form-label mt-3">Algorithm name:</label>
                             @if (Model.Sort.AlgorithmType?.Any() == true)
                             {
                                 @foreach (var option in Model.Sort.AlgorithmType)
@@ -64,11 +100,11 @@
                             }
                             else
                             {
-                                <p>Немає доступних варіантів для параметра 1.</p>
+                                <p>There are no options available for the algorithm parameter.</p>
                             }
                         </div>
                         <div>
-                            <label class="form-label mt-3">Параметр 2:</label>
+                            <label class="form-label mt-3">Collection type:</label>
                             @if (Model.Sort.CollectionType?.Any() == true)
                             {
                                 @foreach (var option in Model.Sort.CollectionType)
@@ -81,11 +117,11 @@
                             }
                             else
                             {
-                                <p>Немає доступних варіантів для параметра 2.</p>
+                                <p>There are no options available for the collection type parameter.</p>
                             }
                         </div>
                         <div>
-                            <label class="form-label mt-3">Параметр 3:</label>
+                            <label class="form-label mt-3">Data type:</label>
                             @if (Model.Sort.DataType?.Any() == true)
                             {
                                 @foreach (var option in Model.Sort.DataType)
@@ -98,24 +134,42 @@
                             }
                             else
                             {
-                                <p>Немає доступних варіантів для параметра 3.</p>
+                                <p>There are no options available for the data type parameter.</p>
                             }
                         </div>
                     </div>
                     <div class="col-md-8 chart-container">
-                        <h5>Графік</h5>
+                        <h5>Chart</h5>
                         <canvas id="chart1"></canvas>
                     </div>
                 </div>
             </div>
-            <!-- Вкладка 2 -->
+            <!-- Pathfinding panel -->
             <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
                 <div class="row">
                     <div class="col-md-4 sidebar">
-                        <h5>Параметри</h5>
-                        <button id="updateChart2" class="btn btn-primary mb-3">Перебудувати графік</button>
+                        <button id="updateChart2" class="btn btn-primary mb-3">Build a table</button>
+                        <h5>Parameters</h5>
+
                         <div>
-                            <label class="form-label mt-3">Параметр 1:</label>
+                            <label class="form-label mt-3">CPU name:</label>
+                            @if (Model.Sort.NameCPU?.Any() == true)
+                            {
+                                <select class="form-select" name="PathfindingNameCPU" id="PathfindingnameCPUSelect">
+                                    @foreach (var option in Model.Pathfinding.PathfindingNameCPU)
+                                    {
+                                        <option value="@option">@option</option>
+                                    }
+                                </select>
+                            }
+                            else
+                            {
+                                <p>There are no options available for the CPU parameter.</p>
+                            }
+                        </div>
+
+                        <div>
+                            <label class="form-label mt-3">Algorithm name:</label>
                             @if (Model.Pathfinding.AlgorithmType?.Any() == true)
                             {
                                 @foreach (var option in Model.Pathfinding.AlgorithmType)
@@ -128,13 +182,13 @@
                             }
                             else
                             {
-                                <p>Немає доступних варіантів для параметра 1.</p>
+                                <p>There are no options available for the algorithm parameter.</p>
                             }
                         </div>
                     </div>
                     <div class="col-md-8 chart-container">
-                        <h5>Графік</h5>
-                        <canvas id="chart2"></canvas>
+                        <h5>Results table</h5>
+                        <div id="tableContainer"></div>
                     </div>
                 </div>
             </div>
@@ -175,42 +229,12 @@
             }
         });
 
-        const ctx2 = document.getElementById('chart2').getContext('2d');
-        let chart2 = new Chart(ctx2, {
-            type: 'line',
-            data: {
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: true,
-                        labels: {
-                            color: '#fff'
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        ticks: {
-                            color: '#fff'
-                        }
-                    },
-                    y: {
-                        ticks: {
-                            color: '#fff'
-                        }
-                    }
-                }
-            }
-        });
-
-
         document.getElementById('updateChart1').addEventListener('click', async () => {
             const selectedOptions = {
                 AlgorithmType: [],
                 CollectionType: [],
-                DataType: []
+                DataType: [],
+                NameCPU: []  // Додаємо нове поле для NameCPU
             };
 
             // Збираємо вибрані значення з чекбоксів
@@ -225,6 +249,13 @@
             document.querySelectorAll('input[name="DataType"]:checked').forEach(checkbox => {
                 selectedOptions.DataType.push(checkbox.value);
             });
+
+            // Збираємо вибране значення з випадаючого списку NameCPU
+            const nameCPUSelect = document.getElementById('SortnameCPUSelect');
+            const selectedNameCPU = nameCPUSelect ? nameCPUSelect.value : null;  // Отримуємо вибраний елемент
+            if (selectedNameCPU) {
+                selectedOptions.NameCPU.push(selectedNameCPU);  // Додаємо його до об'єкта
+            }
 
             // Надсилаємо дані на сервер
             const response = await fetch('/Home/UpdateSortChart', {
@@ -256,48 +287,76 @@
             }
         });
 
-
-        // Оновлення графіка на другій вкладці
         document.getElementById('updateChart2').addEventListener('click', async () => {
-            // Збираємо вибрані параметри (AlgorithmType)
+            // Collect the selected parameters (AlgorithmType and PathfindingNameCPU)
             const selectedOptions = {
-                AlgorithmType: []
+                AlgorithmType: [],
+                PathfindingNameCPU: []
             };
 
+            // Collect selected checkboxes for AlgorithmType
             document.querySelectorAll('input[name="AlgorithmType"]:checked').forEach(checkbox => {
                 selectedOptions.AlgorithmType.push(checkbox.value);
             });
 
-            // Надсилаємо дані на сервер
+            // Collect selected options for PathfindingNameCPU
+            const selectedCPU = document.querySelector('select[name="PathfindingNameCPU"]');
+            if (selectedCPU) {
+                selectedOptions.PathfindingNameCPU = Array.from(selectedCPU.selectedOptions).map(option => option.value);
+            }
+
+            // Send the data to the server
             const response = await fetch('/Home/UpdatePathfindingChart', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() // Для захисту від CSRF
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() // For CSRF protection
                 },
                 body: JSON.stringify(selectedOptions)
             });
 
-            // Перевіряємо відповідь
+            // Check the response
             if (response.ok) {
-                const chartData = await response.json();
+                const tableData = await response.json();
 
-                // Оновлюємо графік з отриманими даними
-                chart2.data.labels = chartData.labels; // labels тепер містять числові значення
-                chart2.data.datasets = chartData.datasets.map(dataset => ({
-                    label: dataset.label,
-                    data: dataset.data.map(point => ({ x: point.x, y: point.y })), // Використовуємо координати x, y
-                    borderColor: dataset.borderColor,
-                    backgroundColor: dataset.backgroundColor,
-                    fill: dataset.fill
-                }));
+                // Get the table container
+                const tableContainer = document.getElementById('tableContainer');
+                tableContainer.innerHTML = ''; // Clear any existing table
 
-                chart2.update();
+                // Create the table element
+                const table = document.createElement('table');
+                table.classList.add('table', 'table-bordered', 'text-light'); // Add Bootstrap classes for styling
+
+                // Create the table header
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                tableData.headers.forEach(header => {
+                    const th = document.createElement('th');
+                    th.textContent = header;
+                    headerRow.appendChild(th);
+                });
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+
+                // Create the table body
+                const tbody = document.createElement('tbody');
+                tableData.rows.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tableData.headers.forEach(header => {
+                        const td = document.createElement('td');
+                        td.textContent = row[header];
+                        tr.appendChild(td);
+                    });
+                    tbody.appendChild(tr);
+                });
+                table.appendChild(tbody);
+
+                // Append the table to the table container
+                tableContainer.appendChild(table);
             } else {
-                console.error('Помилка при отриманні даних для графіка');
+                console.error('Error fetching table data');
             }
         });
-
 
     </script>
 </body>

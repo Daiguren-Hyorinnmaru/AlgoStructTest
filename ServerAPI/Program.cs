@@ -46,19 +46,8 @@ async void MyStartupAction()
     using (var scope = app.Services.CreateScope())
     {
         var context = scope.ServiceProvider.GetRequiredService<DataContext>();
-        Repository<PC_Config> repository = new(context);
-        Repository<SortResult> sortrepository = new(context);
-        Repository<PathfindingResults> Pathfindingsortrepository = new(context);
+        
 
-        IEnumerable<PathfindingResults> t = await Pathfindingsortrepository.GetAllAsync();
-
-        foreach(PathfindingResults i in t)
-        {
-            Console.WriteLine(i.Id);
-            Console.WriteLine("  Time" + i.Time);
-            Console.WriteLine("  LengthPath" + i.LengthPath);
-            Console.WriteLine("  Algotithm" + i.Algotithm);
-        }
     }
     Console.WriteLine("End MyStartupAction");
 }

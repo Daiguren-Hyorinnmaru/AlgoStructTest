@@ -1,30 +1,68 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DataBaseModels.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ServerAPI.DataBase;
+using ServerAPI.DataBase.Repository;
 using ServerAPI.Models;
 using System.Diagnostics;
+using System.Security.Cryptography;
 
 namespace ServerAPI.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private DataContext dataContext;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, DataContext dataContext)
         {
             _logger = logger;
+            this.dataContext = dataContext;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync()
         {
+            Repository<SortResult> SortRepository = new(dataContext);
+            Repository<PathfindingResults> pathfindingRepository = new(dataContext);
+
+
+            IEnumerable<string> distinctAlgorithmTypes = await SortRepository
+                .GetDistinctAsync(sr => sr.AlgorithmType);
+            IEnumerable<string> distinctCollectionType = await SortRepository
+                .GetDistinctAsync(sr => sr.CollectionType);
+            IEnumerable<string> distinctDataType = await SortRepository
+                .GetDistinctAsync(sr => sr.DataType);
+
+            List<string> cpuSortNames = await dataContext.SortResult
+                .Where(sr => sr.PC_Config != null && sr.PC_Config.CPU_Config != null)
+                .Select(sr => sr.PC_Config.CPU_Config.Name)
+                .Distinct()
+                .ToListAsync();
+
             SortResultModel sort = new SortResultModel()
             {
-                AlgorithmType = new List<string>() { "Algorithm1", "Algorithm2", "Algorithm3" },
-                CollectionType = new List<string>() { "Collection1", "Collection2", "Collection3" },
-                DataType = new List<string>() { "Data1", "Data2", "Data3" }
+                NameCPU = cpuSortNames,
+                AlgorithmType = distinctAlgorithmTypes.ToList(),
+                CollectionType = distinctCollectionType.ToList(),
+                DataType = distinctDataType.ToList()
             };
+
+
+            IEnumerable<string> distinctAlgorithmType = await pathfindingRepository
+                .GetDistinctAsync(sr => sr.Algotithm);
+
+            List<string> cpuPathfindingNames = await dataContext.PathfindingResults
+                .Where(sr => sr.PC_Config != null && sr.PC_Config.CPU_Config != null)
+                .Select(sr => sr.PC_Config.CPU_Config.Name)
+                .Distinct()
+                .ToListAsync();
+
             PathfindingResultsModel Pathfinding = new PathfindingResultsModel()
             {
-                AlgorithmType = new List<string>() { "Algorithm1", "Algorithm2", "Algorithm3" }
+                PathfindingNameCPU = cpuPathfindingNames,
+                AlgorithmType = distinctAlgorithmType.ToList()
             };
+
 
             IndexModel model = new IndexModel()
             {
@@ -50,52 +88,91 @@ namespace ServerAPI.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult UpdateSortChart([FromBody] SortResultModel sortParam)
         {
-            if (sortParam != null)
-            {
-                Console.WriteLine("AlgorithmType:");
-                if (sortParam.AlgorithmType != null)
-                    sortParam.AlgorithmType.ForEach(Console.WriteLine);
-                else
-                    Console.WriteLine("No AlgorithmType data received.");
 
-                Console.WriteLine("CollectionType:");
-                if (sortParam.CollectionType != null)
-                    sortParam.CollectionType.ForEach(Console.WriteLine);
-                else
-                    Console.WriteLine("No CollectionType data received.");
-
-                Console.WriteLine("DataType:");
-                if (sortParam.DataType != null)
-                    sortParam.DataType.ForEach(Console.WriteLine);
-                else
-                    Console.WriteLine("No DataType data received.");
-            }
-            else
+            if (sortParam == null ||
+                !sortParam.AlgorithmType.Any() ||
+                !sortParam.CollectionType.Any() ||
+                !sortParam.DataType.Any() ||
+                !sortParam.NameCPU.Any())
             {
-                Console.WriteLine("sortParam is null");
+                return Json(new { message = "At least one field is empty or object is null." });
             }
 
-            // Тут можемо виконати обчислення або підготувати дані для графіка
-            // Наприклад, формуємо дані для графіка
+            Repository<SortResult> SortRepository = new(dataContext);
+            Dictionary<string, List<SortResult>> sortsBlocks = new();
+
+            foreach (string algorithm in sortParam.AlgorithmType)
+            {
+                foreach (string collection in sortParam.CollectionType)
+                {
+                    foreach (string data in sortParam.DataType)
+                    {
+                        string chartName = algorithm + " - " + collection + "[" + data + "]";
+                        List<SortResult> results = SortRepository
+                            .FindAsync(s => s.DataType == data &&
+                            s.CollectionType == collection &&
+                            s.AlgorithmType == algorithm).Result.ToList();
+                        sortsBlocks.Add(chartName, results);
+                    }
+                }
+            }
+
+            int rgbIndex = 4;
+            // Створення масиву для осі X
+            var labels = new List<int>();
+
+            // Створення списку datasets
+            var datasets = new List<object>();
+
+            foreach (KeyValuePair<string, List<SortResult>> entry in sortsBlocks)
+            {
+                rgbIndex+=3;
+
+                string key = entry.Key;
+                List<SortResult> value = entry.Value;
+
+                List<object> data = new List<object>();
+
+                Dictionary<int,List<int>> pairs = new Dictionary<int, List<int>>();
+
+                foreach (SortResult result in value)
+                {
+                    if(!pairs.ContainsKey(result.Length)) pairs.Add(result.Length, new List<int>());
+
+                    pairs[result.Length].Add(result.Time);
+                }
+
+                foreach (KeyValuePair<int, List<int>> result in pairs)
+                {
+                    if (!labels.Contains(result.Key))
+                    {
+                        labels.Add(result.Key);
+                    }
+                    data.Add(new { x = result.Key, y = result.Value.Average() });
+                }
+
+                var borderColor = $"rgba({(rgbIndex * 12) % 255}, " +
+                    $"{(rgbIndex * 25) % 255}, " +
+                    $"{(rgbIndex * 35) % 255}, 1)";
+                var backgroundColor = $"rgba({(rgbIndex * 12) % 255}, " +
+                    $"{(rgbIndex * 25) % 255}, " +
+                    $"{(rgbIndex * 35) % 255}, 0.2)";
+
+                var dataset = new
+                {
+                    label = key,
+                    data = data.ToArray(), // Перетворюємо список у масив
+                    borderColor = borderColor,
+                    backgroundColor = backgroundColor,
+                    fill = false // Без заливки
+                };
+                datasets.Add(dataset);
+            }
+
             var chartData = new
             {
-                labels = new[] { 1, 2, 3, 4, 5, 6 }, // Числові значення для осі X
-                datasets = Enumerable.Range(1, 20).Select(index => new
-                {
-                    label = $"Лінія {index}",
-                    data = new[]
-                    {
-            new { x = 1, y = 12 + index },
-            new { x = 2, y = 15 + index },
-            new { x = 3, y = 8 + index },
-            new { x = 4, y = 6 + index },
-            new { x = 5, y = 9 + index },
-            new { x = 6, y = 4 + index }
-        },
-                    borderColor = $"rgba({(index * 12) % 255}, {(index * 25) % 255}, {(index * 35) % 255}, 1)",
-                    backgroundColor = $"rgba({(index * 12) % 255}, {(index * 25) % 255}, {(index * 35) % 255}, 0.2)",
-                    fill = false // Без заливки
-                }).ToArray()
+                labels = labels,  // Числові значення для осі X
+                datasets = datasets.ToArray()
             };
 
             // Повернення даних для графіка
@@ -104,64 +181,68 @@ namespace ServerAPI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult UpdatePathfindingChart([FromBody] PathfindingResultsModel pathfindingParam)
+        public IActionResult UpdatePathfindingChart([FromBody] PathfindingResultsModel pathfindingParams)
         {
-
-            if (pathfindingParam != null)
+            // Check if the CPU selection is null or empty
+            if (pathfindingParams?.PathfindingNameCPU == null || !pathfindingParams.PathfindingNameCPU.Any())
             {
-                Console.WriteLine("AlgorithmType:");
-                if (pathfindingParam.AlgorithmType != null)
-                    pathfindingParam.AlgorithmType.ForEach(Console.WriteLine);
-                else
-                    Console.WriteLine("No AlgorithmType data received.");
-            }
-            else
-            {
-                Console.WriteLine("sortParam is null");
+                // If no CPU is selected, return a response without updating the table
+                return Json(new { message = "No CPU selected" });
             }
 
-            var chartData = new
+            Repository<PathfindingResults> pathfindingRepository = new(dataContext);
+
+            // Create new data for the table
+            var headers = new List<string> { "Algorithm",
+                "MinTime",
+                "AverageTime",
+                "MaxTime",
+                "MinLengthPath",
+                "AverageLengthPath",
+                "MaxLengthPath" };
+
+            var rows = new List<Dictionary<string, string>>();
+
+            foreach (string item in pathfindingParams.AlgorithmType)
             {
-                labels = new[] { 1, 2, 3, 4, 5, 6 }, // Числові значення для осі X
-                datasets = new[]
-                {
-            new
-            {
-                label = "Лінія 1",
-                data = new[]
-                {
-                    new { x = 1, y = 12 },
-                    new { x = 2, y = 15 },
-                    new { x = 3, y = 8 },
-                    new { x = 4, y = 6 },
-                    new { x = 5, y = 9 },
-                    new { x = 6, y = 4 }
-                },
-                borderColor = "rgba(75, 192, 192, 1)",
-                backgroundColor = "rgba(75, 192, 192, 0.2)",
-                fill = false // Без заливки
-            },
-            new
-            {
-                label = "Лінія 2",
-                data = new[]
-                {
-                    new { x = 1, y = 5 },
-                    new { x = 2, y = 1 },
-                    new { x = 3, y = 14 },
-                    new { x = 4, y = 18 },
-                    new { x = 5, y = 4 },
-                    new { x = 6, y = 11 }
-                },
-                borderColor = "rgba(153, 102, 255, 1)",
-                backgroundColor = "rgba(153, 102, 255, 0.2)",
-                fill = false // Без заливки
+
+                List<PathfindingResults> list = pathfindingRepository
+                    .FindAsync(s => s.PC_Config.CPU_Config.Name == pathfindingParams.PathfindingNameCPU.FirstOrDefault()
+                    && s.Algotithm == item)
+                    .Result.ToList();
+
+                if (list.Count == 0) continue;
+
+
+                Dictionary<string, string> row = new Dictionary<string, string>();
+
+                string alg = list.First().Algotithm;
+
+                double averageTime = list.Any() ? list.Average(item => item.Time) : 0;
+                double maxTime = list.Any() ? list.Max(item => item.Time) : 0;
+                double minTime = list.Any() ? list.Min(item => item.Time) : 0;
+
+                double averageLengthPath = list.Any() ? list.Average(item => item.LengthPath) : 0;
+                double maxLengthPath = list.Any() ? list.Max(item => item.LengthPath) : 0;
+                double minLengthPath = list.Any() ? list.Min(item => item.LengthPath) : 0;
+
+
+                row.Add("Algorithm", alg);
+
+                row.Add("AverageTime", averageTime.ToString("F3"));
+                row.Add("MinTime", minTime.ToString("F3"));
+                row.Add("MaxTime", maxTime.ToString("F3"));
+
+                row.Add("AverageLengthPath", averageLengthPath.ToString("F3"));
+                row.Add("MinLengthPath", minLengthPath.ToString("F3"));
+                row.Add("MaxLengthPath", maxLengthPath.ToString("F3"));
+
+                rows.Add(row);
             }
+
+            // Return the data for the table
+            var tableData = new { Headers = headers, Rows = rows };
+            return Json(tableData);
         }
-            };
-
-            return Ok(chartData);
-        }
-
     }
 }
